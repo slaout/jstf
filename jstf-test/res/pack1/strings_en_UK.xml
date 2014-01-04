@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+	<string name="normalSimpleKey">Normal simple key</string>
+	<string name="normalKeyWith1Parameter">Normal key with one parameter: %d</string>
+	<string name="normalKeyWith2Parameters">Normal key with two parameters: %s and %d</string>
+	<!--string name="keyWithNoEnUkTranslation">Key with no en_UK translation</string-->
+	<string name="keyWithNoFrTranslation">Key with no fr translation</string>
+	<string name="keyNeedingJavaEscaping">	Key needing "Java" 'escaping'!</string>
+	<string name="keyWithEmptyMessage"></string>
+	<string name="unusedKey">Unused key</string>
+	<!--string name="keyWithMissingNonDefaultTranslations">Key with missing non-default translations</string-->
+</resources>

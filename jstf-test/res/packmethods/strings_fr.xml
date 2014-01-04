@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+	<string name="normalSimpleKey">Clef simple normale</string>
+	<string name="normalKeyWith1Parameter">Clef normale avec un paramètre : %d</string>
+	<string name="normalKeyWith2Parameters">Clef normale avec deux paramètres : %s et %d</string>
+	<string name="keyWithNoEnUkTranslation">Clef sans traduction en_UK</string>
+	<!--string name="keyWithNoFrTranslation">Clef sans traduction fr</string-->
+	<string name="keyNeedingJavaEscaping">	Clef nécessitant une 'échappement' "Java" !</string>
+	<string name="keyWithEmptyMessage"></string>
+	<string name="unusedKey">Clef inutilisée</string>
+	<!--string name="keyWithMissingNonDefaultTranslations">Clef avec une traductions manquantes hormis celle par défaut</string-->
+</resources>

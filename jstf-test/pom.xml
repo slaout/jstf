@@ -1,0 +1,140 @@
+<project
+	xmlns="http://maven.apache.org/POM/4.0.0"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+
+	<modelVersion>4.0.0</modelVersion>
+
+	<parent>
+		<groupId>org.jstf</groupId>
+		<artifactId>jstf-parent</artifactId>
+		<version>0.0.1-SNAPSHOT</version>
+	</parent>
+
+	<artifactId>jstf-test</artifactId>
+	<packaging>jar</packaging>
+
+	<name>jstf-generator</name>
+	<url>http://www.jstf.org/</url>
+
+	<properties>
+		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+	</properties>
+
+	<dependencies>
+		<dependency>
+			<groupId>org.jstf</groupId>
+			<artifactId>jstf-lib</artifactId>
+			<version>0.0.1-SNAPSHOT</version>
+		</dependency>
+	</dependencies>
+
+	<build>
+		<plugins>
+			<!-- Generate the translation classes -->
+			<plugin>
+				<groupId>org.jstf</groupId>
+				<artifactId>jstf-maven-plugin</artifactId>
+				<version>${project.version}</version>
+				<executions>
+					<execution>
+						<goals>
+							<goal>generate</goal>
+						</goals>
+						<configuration>
+							<xmlFolder>${basedir}/src/main/resources/jstf</xmlFolder> <!-- Or ${project.build.resources[0].directory}/jstf -->
+							<outClassPathFolder>${project.build.directory}/generated-sources/jstf</outClassPathFolder>
+							<packageName>org.jstf.messages</packageName>
+							<options>
+								<defaultLocale>en</defaultLocale> <!-- String -->
+								<inheritDefaultLocale>true</inheritDefaultLocale> <!-- boolean -->
+								<useConstantsInsteadOfMethods>false</useConstantsInsteadOfMethods> <!-- boolean -->
+								<toStandardJavaConstantNaming>false</toStandardJavaConstantNaming> <!-- boolean -->
+								<useMessageFormatInsteadOfFormatter>false</useMessageFormatInsteadOfFormatter> <!-- boolean -->
+								<i18nClassName>I18n</i18nClassName> <!-- String -->
+							</options>
+						</configuration>
+					</execution>
+				</executions>
+			</plugin>
+
+			<!--
+				IMPORTANT FOR ECLIPSE USERS:
+				See http://stackoverflow.com/questions/11409757/eclipse-3-7-indigo-sr2-m2e-1-1-import-maven-will-not-add-source-folders-of-g
+				You need the m2eclipse-buildhelper plugin to let m2e know how to add the new source folders.
+				(Window > Preferences > Maven > Discovery > Open catalog...)
+			-->
+
+			<!-- Add the translation classes to the classpath - ->
+			<plugin>
+				<groupId>org.codehaus.mojo</groupId>
+				<artifactId>build-helper-maven-plugin</artifactId>
+				<version>1.8</version>
+				<executions>
+					<execution>
+						<id>add-source</id>
+						<phase>generate-sources</phase>
+						<goals>
+							<goal>add-source</goal>
+						</goals>
+						<configuration>
+							<sources>
+								<source>${project.build.directory}/generated-sources/jstf</source>
+							</sources>
+						</configuration>
+					</execution>
+				</executions>
+			</plugin-->
+
+			<!--plugin>
+				<groupId>org.eclipse.m2e</groupId>
+				<artifactId>lifecycle-mapping</artifactId>
+			</plugin-->
+		</plugins>
+
+
+
+<!-- TODO public class AptPluginConfigurator extends AbstractProjectConfigurator implements IJavaProjectConfigurator -->
+<!-- TODO Profile -->
+<!-- https://code.google.com/p/apt-m2e/source/browse/de.joe.m2e.apt/src/main/java/de/joe/m2e/apt/AptPluginConfigurator.java -->
+
+		<pluginManagement>
+			<plugins>
+				<!-- http://stackoverflow.com/questions/8393447/is-maven-eclipse-plugin-no-longer-needed-with-the-new-m2eclipse-in-indigo -->
+				<!--This plugin's configuration is used to store Eclipse m2e settings only. It has no influence on the Maven build itself. -->
+				<plugin>
+					<groupId>org.eclipse.m2e</groupId>
+					<artifactId>lifecycle-mapping</artifactId>
+					<version>1.0.0</version>
+					<configuration>
+						<lifecycleMappingMetadata>
+							<pluginExecutions>
+								<pluginExecution>
+									<pluginExecutionFilter>
+										<groupId>org.jstf</groupId>
+										<artifactId>jstf-maven-plugin</artifactId>
+										<versionRange>[0.0,)</versionRange>
+										<goals>
+											<goal>generate</goal>
+										</goals>
+									</pluginExecutionFilter>
+									<action>
+										<execute>
+											<runOnConfiguration>true</runOnConfiguration>
+											
+											<!--runOnIncremental>true</runOnIncremental-->
+											<!-- Infinite Eclipse compilation loop -->
+											<!-- TODO Use BuildContext: http://wiki.eclipse.org/M2E_compatible_maven_plugins -->
+										</execute>
+									</action>
+								</pluginExecution>
+							</pluginExecutions>
+						</lifecycleMappingMetadata>
+					</configuration>
+				</plugin>
+			</plugins>
+		</pluginManagement>
+
+	</build>
+
+</project>

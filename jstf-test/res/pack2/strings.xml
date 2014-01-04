@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+	<string name="stringTestPack2">String test pack 2</string>
+
+	<plurals name="pluralTestPack2">
+		<item quantity="other">Plural test pack 2 ({0})</item>
+	</plurals>
+</resources>

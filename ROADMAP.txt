@@ -1,0 +1,32 @@
+
+- "packageName" must be part of TranslationGeneratorOptions and defaults to "org.jstf.messages"
+- An option for multilanguage Android compatibility (strings-en.xml vs. res/values-en/strings.xml) with Android Localization Files Editor + is it "res/values-en_US/" or "res/values-en-US/"?
+- Option debugUntranslatedKeys to generate a Debug class with an array with message keys, in order for I18n to return "!theMissingMessageKey!" for an untranslated message. Is this really useful since missing messages are pointed at build time?!
+- Maven plugin: inclue the options fields
+- Document the Maven plugin
+- Finish the README.txt
+- Message format with the right argument types (when using Formatter)
+- Be compatible or offer an option to be or not compatible with with http://developer.android.com/guide/topics/resources/string-resource.html#FormattingAndStyling
+- Cleanups:
+	- Apply Apache Licence in StringUtils: http://www.apache.org/dev/apply-license.html
+	- Remove System.*.print*
+	- Transform tests to JUnit
+- Generate Javadoc with default translation (with option to disable it if compiled in debug mode for production?)
+- Need to create an Eclipse Plugin for m2e:
+	http://wiki.eclipse.org/M2E_compatible_maven_plugins
+	https://github.com/tesla/m2eclipse-buildhelper/blob/master/org.sonatype.m2e.buildhelper/lifecycle-mapping-metadata.xml
+- Create an Ant task:
+	http://ant.apache.org/manual/develop.html
+	http://ant.apache.org/manual/tutorial-writing-tasks.html
+- Add new Maven modules:
+	jstf-example
+	jstf-stresstest
+	jstf-regressiontests
+- TESTS:
+	- What is the output if no translation file is provided in the res folder
+	- Name a key "i18nAccess" or "get": must not conflict with generated methods but return an error with constants
+	- Name a key with ".", or "-" inside: should be capitalised right...  "_" should stay (so that the key name can be searched/replaced easily in both XML and Java)
+	- Name keys with conflicting names, eg. "the.key" and "the-key"
+
+- Import the project on GitHub or BitBucket
+- Create a homepage
