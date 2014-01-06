@@ -164,11 +164,11 @@ public class TranslationGenerator {
 
 		// Generate the MessageXxXx classes, listing all translations of a locale
 		for (String locale : locales) {
-			generateLocaleClass(locale, strings, plurals, filledOptions.packageName, outClassPathFolder);
+			generateLocaleClass(locale, strings, plurals, outClassPathFolder, filledOptions);
 		}
 
 		// Generate the class MessageLoader
-		generateMessageLoaderClass(locales, filledOptions.defaultLocale, filledOptions.useMessageFormatInsteadOfFormatter, filledOptions.packageName, outClassPathFolder);
+		generateMessageLoaderClass(locales, outClassPathFolder, filledOptions);
 	}
 
 	private static void cleanOutputPackage(String outClassPathFolder, String packageName) {
@@ -308,18 +308,21 @@ public class TranslationGenerator {
 		}
 	}
 
-	private static void generateMessageLoaderClass(Set<String> locales, String defaultLocale, boolean useMessageFormatInsteadOfFormatter, String packageName, String outClassPathFolder) throws IOException {
+	private static void generateMessageLoaderClass(Set<String> locales, String outClassPathFolder, TranslationGeneratorOptions options) throws IOException {
 		String className = "MessageLoader";
 
 		StringBuilder builder = new StringBuilder();
 
-		builder.append("package ").append(packageName).append(";").append(LS);
+		builder.append("package ").append(options.packageName).append(";").append(LS);
 		builder.append(LS);
 		builder.append("import org.jstf.lib.MessageBase;").append(LS);
 		builder.append(LS);
 		builder.append("class ").append(className).append(" implements org.jstf.lib.MessageLoader {").append(LS);
 		builder.append(LS);
 
+		if (!options.java5Compatible) {
+			builder.append("\t@Override").append(LS);
+		}
 		builder.append("\tpublic MessageBase getMessages(String language, String country) {").append(LS);
 		boolean isFirst = true;
 		// Priority to specialized language+country
@@ -339,10 +342,10 @@ public class TranslationGenerator {
 
 		builder.append("\t\t} else {").append(LS);
 		String newLocaleClass = "null";
-		if (defaultLocale != null) {
-			newLocaleClass = camelCaseLocale(defaultLocale.substring(0, 2));
-			if (defaultLocale.length() == 5) {
-				newLocaleClass += camelCaseLocale(defaultLocale.substring(3, 5).toLowerCase());
+		if (options.defaultLocale != null) {
+			newLocaleClass = camelCaseLocale(options.defaultLocale.substring(0, 2));
+			if (options.defaultLocale.length() == 5) {
+				newLocaleClass += camelCaseLocale(options.defaultLocale.substring(3, 5).toLowerCase());
 			}
 			newLocaleClass = "new Message" + newLocaleClass + "()";
 		}
@@ -351,14 +354,17 @@ public class TranslationGenerator {
 		builder.append("\t}").append(LS);
 		builder.append(LS);
 
+		if (!options.java5Compatible) {
+			builder.append("\t@Override").append(LS);
+		}
 		builder.append("\tpublic boolean isUsingMessageFormatInsteadOfFormatter() {").append(LS);
-		builder.append("\t\treturn ").append(useMessageFormatInsteadOfFormatter ? "true" : "false").append(";").append(LS);
+		builder.append("\t\treturn ").append(options.useMessageFormatInsteadOfFormatter ? "true" : "false").append(";").append(LS);
 		builder.append("\t}").append(LS);
 		builder.append(LS);
 
 		builder.append("}").append(LS);
 
-		saveClassFile(builder, outClassPathFolder, packageName, className);
+		saveClassFile(builder, outClassPathFolder, options.packageName, className);
 	}
 
 	private static void generateMessageLoaderForLocale(StringBuilder builder, boolean isFirst, String locale) {
@@ -396,7 +402,7 @@ public class TranslationGenerator {
 		builder.append("\tprivate static I18nAccess i18nAccess = new I18nAccess(new MessageLoader());").append(LS);
 		builder.append(LS);
 
-		if (!options.useConstantsInsteadOfMethods) {
+		if (options.useConstantsInsteadOfMethods) {
 			// TODO Javadoc
 			builder.append("\tpublic static String get(char keyCode, Object... params) {").append(LS);
 			builder.append("\t\treturn i18nAccess.get(keyCode, params);").append(LS);
@@ -505,7 +511,7 @@ public class TranslationGenerator {
 			if (value instanceof String[]) {
 				String[] stringArray = (String[]) value;
 				for (String subValue : stringArray) {
-					if (subValue.length() > 0) {
+					if (subValue != null && subValue.length() > 0) {
 						message = subValue;
 						break findMessage;
 					}
@@ -556,12 +562,12 @@ public class TranslationGenerator {
 		return true;
 	}
 
-	private static void generateLocaleClass(String locale, Map<String, Map<String, String>> strings, Map<String, Map<String, String[]>> plurals, String packageName, String outClassPathFolder) throws IOException {
+	private static void generateLocaleClass(String locale, Map<String, Map<String, String>> strings, Map<String, Map<String, String[]>> plurals, String outClassPathFolder, TranslationGeneratorOptions options) throws IOException {
 		String className = "Message" + camelCaseLocale(locale);
 
 		StringBuilder builder = new StringBuilder();
 
-		builder.append("package ").append(packageName).append(";").append(LS);
+		builder.append("package ").append(options.packageName).append(";").append(LS);
 		builder.append(LS);
 		builder.append("import org.jstf.lib.MessageBase;").append(LS);
 		builder.append(LS);
@@ -597,22 +603,34 @@ public class TranslationGenerator {
 		builder.append("\t};").append(LS);
 		builder.append(LS);
 
+		if (!options.java5Compatible) {
+			builder.append("\t@Override").append(LS);
+		}
 		builder.append("\tpublic final String getLanguage() {").append(LS);
 		builder.append("\t\treturn \"").append(locale.substring(0, 2)).append("\";").append(LS);
 		builder.append("\t}").append(LS);
 		builder.append(LS);
 
 		String countryString = (locale.length() == 5 ? "\"" + locale.substring(3, 5) + "\"" : "null");
+		if (!options.java5Compatible) {
+			builder.append("\t@Override").append(LS);
+		}
 		builder.append("\tpublic final String getCountry() {").append(LS);
 		builder.append("\t\treturn ").append(countryString).append(";").append(LS);
 		builder.append("\t}").append(LS);
 		builder.append(LS);
 
+		if (!options.java5Compatible) {
+			builder.append("\t@Override").append(LS);
+		}
 		builder.append("\tpublic final String[] getStrings() {").append(LS);
 		builder.append("\t\treturn ").append(className).append(".strings;").append(LS);
 		builder.append("\t}").append(LS);
 		builder.append(LS);
 
+		if (!options.java5Compatible) {
+			builder.append("\t@Override").append(LS);
+		}
 		builder.append("\tpublic final String[][] getPlurals() {").append(LS);
 		builder.append("\t\treturn ").append(className).append(".plurals;").append(LS);
 		builder.append("\t}").append(LS);
@@ -620,7 +638,7 @@ public class TranslationGenerator {
 
 		builder.append("}").append(LS);
 
-		saveClassFile(builder, outClassPathFolder, packageName, className);
+		saveClassFile(builder, outClassPathFolder, options.packageName, className);
 	}
 
 	/**
