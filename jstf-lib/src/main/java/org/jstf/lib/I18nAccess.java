@@ -15,11 +15,17 @@ import java.util.Locale;
  */
 public class I18nAccess {
 
+	private static final String DEBUG_PREFIX = "(";
+
+	private static final String DEBUG_SUFFIX = ")";
+
 	private final MessageLoader messageLoader;
 
 	private MessageBase messageBase;
 
 	private Locale locale; // TODO Remove if/when MessageBase provides it own getLocale()
+	
+	private boolean isDebugLocale;
 
 	private PluralRules pluralRules;
 
@@ -44,9 +50,14 @@ public class I18nAccess {
 			String string = messageBase.getStrings()[keyCode];
 			// ... apply parameters
 			if (string != null && params != null && params.length > 0) {
-				return applyParameters(string, params);
-			} else if (string != null) {
-				return string;
+				string = applyParameters(string, params);
+			}
+			if (string != null) {
+				if (isDebugLocale) {
+					return DEBUG_PREFIX + string + DEBUG_SUFFIX;
+				} else {
+					return string;
+				}
 			}
 		}
 
@@ -79,9 +90,14 @@ public class I18nAccess {
 				String string = plural[pluralIndex];
 				// ... apply parameters
 				if (string != null && params != null && params.length > 0) {
-					return applyParameters(string, params);
-				} else if (string != null) {
-					return string;
+					string = applyParameters(string, params);
+				}
+				if (string != null) {
+					if (isDebugLocale) {
+						return DEBUG_PREFIX + string + DEBUG_SUFFIX;
+					} else {
+						return string;
+					}
 				}
 			}
 		}
@@ -94,6 +110,8 @@ public class I18nAccess {
 		// TODO What to do with multi-thread access to translations? Not a big deal because concurrent initializations will lead to the same state, but we need to think about a synchronization mechanism or not
 		if (messageBase == null) {
 			Locale defaultLocale = Locale.getDefault();
+			// Store debug status now, before default local being replaced by an available locale
+			isDebugLocale = defaultLocale.getLanguage().equals(new Locale("xx").getLanguage());
 			messageBase = messageLoader.getMessages(defaultLocale.getLanguage(), defaultLocale.getCountry());
 			if (messageBase != null) {
 				// See http://docs.oracle.com/javase/7/docs/api/java/util/Locale.html#getLanguage()
@@ -127,7 +145,7 @@ public class I18nAccess {
 		}
 	}
 
-	private String keyNotFoundMessage(int keyCode, Object... params) {
+	private static String keyNotFoundMessage(int keyCode, Object... params) {
 		String string;
 		string = "!" + keyCode + "!";
 		if (params != null && params.length > 0) {
