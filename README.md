@@ -1,96 +1,11 @@
 Java Static Translation Framework (JSTF)
 ====
 
-Mail to be sent to libGdx guys (in progress)
-----
+This is version 0.0.1: it is still a work in progress.
+If you are interested, please contact me.
 
-Hello guys,
-
-I've searched the net and found no translation mechanism for libGdx.
-
-The Android strings and plurals mechanism is an excellent translation system.
-But libGdx is multi-platform, so we cannot depend on Android libraries.
-
-Moreover, the Android mechanism parses XML at runtime, which is time and memory consuming.
-I develop a game that once loaded level data using JSON at startup but found it very very slow to load because of heavy usage of the garbage collector on Android (ran fine on the desktop, but was still not as snappy as I wanted).
-So I resorted to parse JSON files and generate Java classes at compilation time.
-The game now starts up instantly, that's pure magic ;-)
-I wanted a similar system for translations: no parsing required at startup, everything in Java and constants, the Java class is loaded in memory with exactly 0 garbage collection.
-
-These are two requirements I had for such translation mechanism.
-The solutions I found on Internet did not meet these requirements.
-So I made a framework for myself.
-I made it generic, so it could be reused in other projects.
-
-Here is a mail to present my solution to you and discuss these questions:
-* Are you interested in a translation system for libGdx?
-* What would be your requirements for an official libGdx translation system?
-* What would you change on my framework in order to make it fit better for libGdx users?
-* Would you include it in libGdx or recommend it as the official libGdx translation system (one can hope ;-) )?
-* Do you have questions regarding its internal working or how to use it? I will reply and add them to the FAQ.
-
-I called this framework "Java Static Translation Framework (JSTF)".
-
-Here is a link to the project I just started:
-TODO GitHub link
-
-It contains:
-* the library,
-* a README.txt file explaining everything and
-* a sample project.
-
-Here is a short example of how to use it:
-
-1. You create a development-time resource file (not deployed in JAR or APK):
-
-	<?xml version="1.0" encoding="utf-8"?>
-	<resources>
-		<string name="normalKeyWith1Parameter">Normal key with one parameter: %d</string>
-		<plurals name="pluralKey">
-			<item quantity="one">The is %d item</item>
-			<item quantity="other">There are %d items</item>
-		</plurals>
-	</resources>
-
-There is one file per translated locale.
-It is the same format as Android strings.xml files.
-LibGdx being mainly targeted to Android developers, I tought it would be a nice requirement.
-The XML files can be used by the same tools as Android projects, and sent to translators on Google translation services, for instance.
-This is very convenient, and your project is still platform-independent.
-
-2. At build-time you run a Java class, or a script, or a Maven plugin (or in the future a Gradle task+plugin or an Ant task) that will parse the XML files.
-This class/script/plugin will generate several classes containing the translations.
-For instance, it will generate:
-
-	I18n.java (the access class)
-	MessageEnUs.java (the class storing messages for the en_US locale)
-	MessageFr.java (the class storing messages for the fr locale)
-	MessageLoader.java (the class that loads the correct Message* class depending on the user locale)
-
-3. At run-time, all you have to do to get translations is:
-
-	I18n.normalKeyWith1Parameter(42);
-
-or:
-
-	I18n.pluralKey(itemNumber, itemNumber, parameter2);
-
-And voilà!
-
-I'm waiting for your comments.
-
-Best regards,
-Sébastien Laoût.
-
-
-	********************************************
-	* Java Static Translation Framework (JSTF) *
-	********************************************
-
-
-====================
 Aim of the Framework
-====================
+----
 
 Here are the criteria used to evaluate a translation solution.
 None of the projects found on Internet fulfilled the requirements:
@@ -110,9 +25,8 @@ None of the projects found on Internet fulfilled the requirements:
 - No warning by using hard-coded Strings in the code (if keys are String, it would be better if developers do not have to use $NON-NLS-x$ comments)
 - Allow developers to use whatever platforms they prefer (Windows, Linux, Mac OS X...)
 
-===================
 Evaluated Solutions
-===================
+----
 
 Given the requirements described above, here are the studied existing translation solutions and why they did not fit so I needed to create JSTF:
 
@@ -152,16 +66,14 @@ Given the requirements described above, here are the studied existing translatio
 * Other ideas of translation frameworks:
 	http://stackoverflow.com/questions/10248824/l18n-framework-with-compiletime-checking
 
-========================
 Requirements to Use JSTF
-========================
+----
 
 Your project needs to target minimum Java 5.
 Maven/Ant are supported but not required.
 
-=============================================
 How Does the Framework Work for Your Project?
-=============================================
+----
 
 1. You create a development-time resource file (not deployed in JAR or APK):
 
@@ -198,9 +110,8 @@ or:
 
 And voilà!
 
-==================================================
-How to Translate Your Project using a Main Program
-==================================================
+How to Translate Your Project Using a Main Program
+----
 
 See the previous section "How Does the Framework Work for Your Project?".
 
@@ -234,9 +145,8 @@ This section describes the step of generating translation classes with only a Ma
 
 * There is an optional parameter in TranslationGenerator.generate(): you can use the options described in the "Advanced Uses" section of this manual.
 
-=========================================
-How to Translate Your Project using Maven
-=========================================
+How to Translate Your Project Using Maven
+----
 
 See the previous section "How Does the Framework Work for Your Project?".
 
@@ -316,9 +226,8 @@ This is the project "jstf-test".
 
 * In the <configuration></configuration> part of the jstf-maven-plugin plugin, you can use the options described in the "Advanced Uses" section of this manual.
 
-==========================
 XML Format of Translations
-==========================
+----
 
 Basically, here is an example of strings.xml file in order to understand the format:
 
@@ -364,9 +273,8 @@ For more information about the XML syntax, please see (there is no String Array 
 - http://developer.android.com/guide/topics/resources/string-resource.html#String
 - http://developer.android.com/guide/topics/resources/string-resource.html#Plurals
 
-=============
 Advanced Uses
-=============
+----
 
 TODO Options
 TODO Fragmented packages
@@ -377,9 +285,8 @@ MessageFormat:
 	Usually "{0} {1}"
 	But can be eg. "{0} {1,number} {2,number,integer} {3,date,short}"
 
-==================================
 Tools and Workflow for Translators
-==================================
+----
 
 TODO Document Android tools like:
 http://stackoverflow.com/questions/10462247/is-there-a-way-how-to-edit-multiple-localised-string-xml-files-in-one-window-in
@@ -403,15 +310,14 @@ http://android-developers.blogspot.fr/2013/11/app-translation-service-now-availa
 Eclipse Plugin for that
 http://developer.android.com/sdk/installing/installing-adt.html#tmgr
 
-===============================================
 Configuring a Tool to Check for Unused Messages
-===============================================
+----
 
 This is the only requirement that was not meet by this JSTF solution.
 
 Fortunately, there are tools that can check for unused methods in a project, allowing you to find message keys to remove.
 
-We recommand to use the tool "UCDetector": http://www.ucdetector.org/
+We recommend to use the tool "UCDetector": http://www.ucdetector.org/
 
 Install UCDetector with the following update-site (if it hasn't changed at the moment of you reading this document): http://ucdetector.sourceforge.net/update
 Restart Eclipse
@@ -419,12 +325,11 @@ Right click on the generated I18n.java file, choose "UCDetector" and then click 
 In the I18n class, you get warnings like "Method "I18n.unusedKey()" has 0 references", so you know what message keys to remove
 To get rid of the warnings, right click on the generated I18n.java file, choose "UCDetector" and then click "Clean markers"
 
-Alternatively, you can also use this project (not tested, as it seems quite complexe for such a simple task of discovering unused methods or constants):
+Alternatively, you can also use this project (not tested, as it seems quite complex for such a simple task of discovering unused methods or constants):
 https://developers.google.com/java-dev-tools/codepro/doc/features/features
 
-=====================
 Downsides & Solutions
-=====================
+----
 
 The speed benefit of JSTF comes with less flexibility when deploying updated translations: the whole application has to be repackaged & redeployed.
 This is not a problem for Android/libgdx applications, but it may be problematic for web applications.
@@ -441,9 +346,8 @@ It *could* be a problem on low resource machines like Android systems...
 But at the same time, the DEX cache created by Android groups several .class files and thus agregate duplicate constants, so they are not duplicate anymore.
 At runtime, there is no difference.
 
-===================
 Stress-Test Results
-===================
+----
 
 TODO All strings will be interned, isn't it? Is it bad?
 http://www.codeinstructions.com/2009/01/busting-javalangstringintern-myths.html
@@ -455,60 +359,59 @@ In the test generator project, there is a Main class generating an XML file with
 Here are the results:
 TODO Jar size, class loading time on computer and Android devices.
 
-
-GENERATED CONSTANTS
-	STRINGS:
-		String text = "abcdefghijklmno " + i;
-			Character.MAX_VALUE: = 65536
-				I18n: Too many fields for type I18nStressTest. Maximum is 65535
-				MessageEn: Too many constants, the constant pool for MessageFr would exceed 65536 entries
-			Character.MAX_VALUE / 7: = 9362
-				I18n: OK
-				MessageEn: The code for the static initializer is exceeding the 65535 bytes limit
-			Character.MAX_VALUE / 8:
-				Compilation time is fast
-				WARNING: auto-completion in Eclipse takes a few seconds
-				I18n: OK
-				MessageEn: OK
-		String text = "abcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyz " + i;
-			Character.MAX_VALUE / 8: = 8192
-				Compilation is fast
-				I18n: OK
-				MessageEn: OK
-				Class sizes:
-					I18nStressTest.class (  253�805 bytes)
-					MessageEn.class      (1�039�842 bytes)
-					MessageLoader.class  (      858 bytes)
-				Stress-test first-translation: 212793245 ns  =>  2.12793245 seconds
-				Stress-test second-translation: 2766 ns
-				Stress-test first-translation: 42603061 ns  =>  0.42603061 seconds
-				Stress-test second-translation: 1975 ns
-		String text = "abcdefghijklmno " + i;
-			Idem, but MessageEn.class (310�843 bytes)
-				Stress-test first-translation: 110722360 ns  =>  0.11072236 seconds
-				Stress-test second-translation: 3161 ns  =>  0.00003161 seconds
-				Stress-test first-translation: 35910178 ns  => 0.035910178 seconds
-				Stress-test second-translation: 3556 ns  =>  0.00003556 seconds
-		=> Max 8221: BY DICHOTOMY, MAXIMUM NUMBER OF STRINGS (+ 0 PLURAL) IS 8221 FOR MessageEn to be bellow static initializer limit
-			"abcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyz " + i
-				strings.xml: 754�179 bytes
-				*.class:     871�753 bytes  (without lib; adds up 25�897 bytes)
-			"abcdefghijklmno " + i
-				strings.xml: 450�002 bytes
-				*.class:     567�576 bytes  (without lib; adds up 25�897 bytes)
-		TODO: Compare with loading time for a .properties file
-		TODO: & compare on Android!
-	PLURALS:
-		With 2 non-null strings per plural: Max 2987
-		With 3 non-null strings per plural: Max 2348
-		With 4 non-null strings per plural: Max 1931
-		With 5 non-null strings per plural: Max 1644
-		With 6 non-null strings per plural: Max 1429
-		strings.xml: 470�167 bytes
-		*.class:     344�482 bytes  (without lib; adds up 25�897 bytes)
-FOR INFORMATION, a big e-commerce website on one of my clients was having roughly 4600 messages. Will fit in 1, 2 or 3 packs. BTW, it would benefit such a partitioning.
-GENERATED METHODS
-	TODO
+	GENERATED CONSTANTS
+		STRINGS:
+			String text = "abcdefghijklmno " + i;
+				Character.MAX_VALUE: = 65536
+					I18n: Too many fields for type I18nStressTest. Maximum is 65535
+					MessageEn: Too many constants, the constant pool for MessageFr would exceed 65536 entries
+				Character.MAX_VALUE / 7: = 9362
+					I18n: OK
+					MessageEn: The code for the static initializer is exceeding the 65535 bytes limit
+				Character.MAX_VALUE / 8:
+					Compilation time is fast
+					WARNING: auto-completion in Eclipse takes a few seconds
+					I18n: OK
+					MessageEn: OK
+			String text = "abcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyz " + i;
+				Character.MAX_VALUE / 8: = 8192
+					Compilation is fast
+					I18n: OK
+					MessageEn: OK
+					Class sizes:
+						I18nStressTest.class (  253 805 bytes)
+						MessageEn.class      (1 039 842 bytes)
+						MessageLoader.class  (      858 bytes)
+					Stress-test first-translation: 212793245 ns  =>  2.12793245 seconds
+					Stress-test second-translation: 2766 ns
+					Stress-test first-translation: 42603061 ns  =>  0.42603061 seconds
+					Stress-test second-translation: 1975 ns
+			String text = "abcdefghijklmno " + i;
+				Idem, but MessageEn.class (310 843 bytes)
+					Stress-test first-translation: 110722360 ns  =>  0.11072236 seconds
+					Stress-test second-translation: 3161 ns  =>  0.00003161 seconds
+					Stress-test first-translation: 35910178 ns  => 0.035910178 seconds
+					Stress-test second-translation: 3556 ns  =>  0.00003556 seconds
+			=> Max 8221: BY DICHOTOMY, MAXIMUM NUMBER OF STRINGS (+ 0 PLURAL) IS 8221 FOR MessageEn to be bellow static initializer limit
+				"abcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyz " + i
+					strings.xml: 754 179 bytes
+					*.class:     871 753 bytes  (without lib; adds up 25 897 bytes)
+				"abcdefghijklmno " + i
+					strings.xml: 450 002 bytes
+					*.class:     567 576 bytes  (without lib; adds up 25 897 bytes)
+			TODO: Compare with loading time for a .properties file
+			TODO: & compare on Android!
+		PLURALS:
+			With 2 non-null strings per plural: Max 2987
+			With 3 non-null strings per plural: Max 2348
+			With 4 non-null strings per plural: Max 1931
+			With 5 non-null strings per plural: Max 1644
+			With 6 non-null strings per plural: Max 1429
+			strings.xml: 470 167 bytes
+			*.class:     344 482 bytes  (without lib; adds up 25 897 bytes)
+	FOR INFORMATION, a big e-commerce website on one of my clients was having roughly 4600 messages. Will fit in 1, 2 or 3 packs. BTW, it would benefit such a partitioning.
+	GENERATED METHODS
+		TODO
 
 TODO What about JSP? Access with key, using reflection
 
@@ -528,11 +431,10 @@ TODO
 	* MessageLoader: @SuppressWarnings("unused") String country
 	* Automatically split fields and translations in X sub-classes?
 
-=====================
 Hacking the Framework
-=====================
+----
 
-Fetch the project from GitHub (or GitBucket).
+Fetch the project from GitHub.
 In Eclipse, import existing Maven projects for sub-modules.
 In Eclipse, in "jstf" parent project, right click each "jstf-*" folders and choose Properties, check "Derived".
 
@@ -542,3 +444,83 @@ TODO JUnit to check generated classes
 TODO JUnit to check working translations
 
 
+Mail to be sent to libGdx guys (in progress)
+----
+
+Hello guys,
+
+I've searched the net and found no translation mechanism for libGdx.
+
+The Android strings and plurals mechanism is an excellent translation system.
+But libGdx is multi-platform, so we cannot depend on Android libraries.
+
+Moreover, the Android mechanism parses XML at runtime, which is time and memory consuming.
+I develop a game that once loaded level data using JSON at startup but found it very very slow to load because of heavy usage of the garbage collector on Android (ran fine on the desktop, but was still not as snappy as I wanted).
+So I resorted to parse JSON files and generate Java classes at compilation time.
+The game now starts up instantly, that's pure magic ;-)
+I wanted a similar system for translations: no parsing required at startup, everything in Java and constants, the Java class is loaded in memory with exactly 0 garbage collection.
+
+These are two requirements I had for such translation mechanism.
+The solutions I found on Internet did not meet these requirements.
+So I made a framework for myself.
+I made it generic, so it could be reused in other projects.
+
+Here is a mail to present my solution to you and discuss these questions:
+* Are you interested in a translation system for libGdx?
+* What would be your requirements for an official libGdx translation system?
+* What would you change on my framework in order to make it fit better for libGdx users?
+* Would you include it in libGdx or recommend it as the official libGdx translation system (one can hope ;-) )?
+* Do you have questions regarding its internal working or how to use it? I will reply and add them to the FAQ.
+
+I called this framework "Java Static Translation Framework (JSTF)".
+
+Here is a link to the project I just started:
+https://github.com/slaout/jstf
+
+It contains:
+* the library,
+* a README.txt file explaining everything and
+* a sample project.
+
+Here is a short example of how to use it:
+
+1. You create a development-time resource file (not deployed in JAR or APK):
+
+	<?xml version="1.0" encoding="utf-8"?>
+	<resources>
+		<string name="normalKeyWith1Parameter">Normal key with one parameter: %d</string>
+		<plurals name="pluralKey">
+			<item quantity="one">The is %d item</item>
+			<item quantity="other">There are %d items</item>
+		</plurals>
+	</resources>
+
+There is one file per translated locale.
+It is the same format as Android strings.xml files.
+LibGdx being mainly targeted to Android developers, I tought it would be a nice requirement.
+The XML files can be used by the same tools as Android projects, and sent to translators on Google translation services, for instance.
+This is very convenient, and your project is still platform-independent.
+
+2. At build-time you run a Java class, or a script, or a Maven plugin (or in the future a Gradle task+plugin or an Ant task) that will parse the XML files.
+This class/script/plugin will generate several classes containing the translations.
+For instance, it will generate:
+
+	I18n.java (the access class)
+	MessageEnUs.java (the class storing messages for the en_US locale)
+	MessageFr.java (the class storing messages for the fr locale)
+	MessageLoader.java (the class that loads the correct Message* class depending on the user locale)
+
+3. At run-time, all you have to do to get translations is:
+
+	I18n.normalKeyWith1Parameter(42);
+
+or:
+
+	I18n.pluralKey(itemNumber, itemNumber, parameter2);
+
+And voilà!
+
+I'm waiting for your comments.
+
+Best regards,
+Sébastien Laoût.
