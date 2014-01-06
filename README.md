@@ -102,6 +102,7 @@ How Does the Framework Work for Your Project?
 ----
 
 1. You create a development-time resource file (not deployed in JAR or APK):
+
 ```xml
 	<?xml version="1.0" encoding="utf-8"?>
 	<resources>
@@ -112,8 +113,9 @@ How Does the Framework Work for Your Project?
 		</plurals>
 	</resources>
 ```
-There is one file per translated locale.
-It is the same format as Android strings.xml files.
+
+   There is one file per translated locale.
+   It is the same format as Android strings.xml files.
 
 2. At build-time you run a Java class, or a script, or a Maven plugin (or in the future a Gradle task+plugin or an Ant task) that will parse the XML files.
 	This class/script/plugin will generate several classes containing the translations.
