@@ -7,63 +7,89 @@ If you are interested, please contact me.
 Aim of the Framework
 ----
 
-Here are the criteria used to evaluate a translation solution.
+JSTF was first created as a very lightweight, yet complete, tool to translate libGdx multi-platform applications (Android being the main target).
+It was mainly required to not heavy-parsing free, to be able to startup as quick as possible on low-end phone hardwares.
+The second requirement was to have a modern feature-set, with plural support as much as good as Android's, and being able to detect unused and untranslated keys.
+
+Here are all the criteria used to evaluate a translation solution.
 None of the projects found on Internet fulfilled the requirements:
 
 - No parsing at startup (costly on small JVMs like Android ones)
-- Fast run-time (no or few&fast string comparisons for the keys, or cache values)
+- Fast run-time (no or few&fast string comparisons for the keys, or if string comparisons are required, cache values)
 - No or minimal dependency tree (eg. no Android dependency for libGdx multi-platform projects; if possible only add one or two JARs to ease the task of people managing dependencies by hand)
-- Unicode translations (prefer UTF-8; it is easy with XML files, and hard for .properties that are always ISO-8859-1 and need a step to transform them from Unicode to ISO-8859-1)
+- Unicode translations (prefer UTF-8; it is easy with XML files, and hard for .properties that are always ISO-8859-1 and need one more step to transform them from Unicode to ISO-8859-1)
 - Messages can have parameters (formatted with MessageFormat or Formatter, or a similar solution)
 - Plurals support for any Unicode language (one/two/zero/few/many/other Unicode forms, eg. 0 is plural in English but singular in French : "0 files" in English vs. "0 fichier" in French)
 - Easy retrieving of the translations in Java (one simple method call: no need to use a factory, complex configuration, etc.)
 - Do not crash if asking for an unknown key (return "!theUnknownKey!", for instance)
-- Automatically get the system language/locale ("en" vs. "en_US") + allow to use any locale at runtime
+- Automatically get the system language/locale ("en" vs. "en_US") and allow to use any locale at runtime
 	TODO Implement dynamic locale change in JSTF
 - A system to detect non-existant keys (or generate constants or methods, so compilation will fail when using unknown keys)
 - A system to detect unused keys (if constants or methods are generated, it is possible to use the UCDetector Eclipse plugin quite easily)
-- No warning by using hard-coded Strings in the code (if keys are String, it would be better if developers do not have to use $NON-NLS-x$ comments)
-- Allow developers to use whatever platforms they prefer (Windows, Linux, Mac OS X...)
+- No compiler-warning by using hard-coded Strings in the code (if keys are String, it would be better if developers do not have to use $NON-NLS-x$ comments)
+- Allow developers and translators to use whatever platforms they prefer (Windows, Linux, Mac OS X...)
 
 Evaluated Solutions
 ----
 
-Given the requirements described above, here are the studied existing translation solutions and why they did not fit so I needed to create JSTF:
+Given the requirements described above, here are the studied existing translation solutions and why they did not fit so the creation of JSTF was needed:
 
-* Java bridge to GNU gettext
+* **Java bridge to GNU gettext**
+
 	https://code.google.com/p/gettext-commons/wiki/Tutorial
+
 	My solution of choice when developping on C++/Qt.
 	Has a very good support for plural forms.
 	But is widely unused in Java projects: all Java projects use a key/value mechanism instead of the methodCall("String to translate") idiom.
 	It is heavily based on String comparisons.
 	The build tools need to be run on a Unix system: it is hard to make it work in a multi-platform way (see the comment section of the tutorial).
-* XML libGdx
+
+* **XML libGdx**
+
 	http://siondream.com/blog/games/internationalization-for-libgdx-projects/
+
 	It is very basic.
 	It uses string keys.
 	All languages in one big XML file that needs to be parsed and stored in memory.
 	The XML format does not allow to use existing translation tools.
-* C10N
+
+* **C10N**
+
 	https://github.com/rodionmoiseev/c10n/wiki/Overview
+
 	Quite seducing for its nice annotation-based system where every translation is a method (good key and parameters checking)
 	But translators need to edit the Java files by hand! And we are not talking about string escaping...
 	Or one can use properties instead of Java annotations, but then we are back with a good-old-Java-properties system.
-* Eclipse
+
+* **Eclipse**
+
 	http://stackoverflow.com/questions/3886978/configuring-string-externalization-in-eclipse-to-use-key-as-field-name
+
 	http://help.eclipse.org/indigo/index.jsp?topic=%2Forg.eclipse.platform.doc.isv%2Freference%2Fapi%2Forg%2Feclipse%2Fosgi%2Futil%2FNLS.html
+
 	http://help.eclipse.org/helios/index.jsp?topic=/org.eclipse.jdt.doc.user/reference/ref-wizard-externalize-strings.htm
+
 	http://eclipse.org/articles/Article-Internationalization/how2I18n.html
+
 	http://docs.oracle.com/javase/tutorial/i18n/intro/index.html
+
 	http://docs.oracle.com/javase/6/docs/api/java/text/MessageFormat.html
+
 	NLS.bind(Messages.key_two, "example usage")
+
 	Keys are String that needs to be loaded in memory and generate a lot of String comparisons.
 	The system and its configuration is hard because there lacks a  good and complete documentation.
 	Plural support with ChoiceFormat is a syntax nightmare for translators.
-* Android String resources
+
+* **Android String resources**
+
 	http://developer.android.com/guide/topics/resources/string-resource.html
+
 	Very nice tool, with a good workflow for developers and translators.
 	But it is tied to Android: we need to be library-agnostic.
-* Other ideas of translation frameworks:
+
+* **Other ideas of translation frameworks**
+
 	http://stackoverflow.com/questions/10248824/l18n-framework-with-compiletime-checking
 
 Requirements to Use JSTF
@@ -77,6 +103,7 @@ How Does the Framework Work for Your Project?
 
 1. You create a development-time resource file (not deployed in JAR or APK):
 
+```xml
 	<?xml version="1.0" encoding="utf-8"?>
 	<resources>
 		<string name="normalKeyWith1Parameter">Normal key with one parameter: %d</string>
@@ -85,28 +112,33 @@ How Does the Framework Work for Your Project?
 			<item quantity="other">There are %d items</item>
 		</plurals>
 	</resources>
+```
 
-There is one file per translated locale.
-It is the same format as Android strings.xml files.
+	There is one file per translated locale.
+	It is the same format as Android strings.xml files.
 
 2. At build-time you run a Java class, or a script, or a Maven plugin (or in the future a Gradle task+plugin or an Ant task) that will parse the XML files.
-This class/script/plugin will generate several classes containing the translations.
-For instance, it will generate:
+	This class/script/plugin will generate several classes containing the translations.
+	For instance, it will generate:
 
-	I18n.java (the access class)
-	MessageEnUs.java (the class storing messages for the en_US locale)
-	MessageFr.java (the class storing messages for the fr locale)
-	MessageLoader.java (the class that loads the correct Message* class depending on the user locale)
+	* I18n.java (the access class)
+	* MessageEnUs.java (the class storing messages for the en_US locale)
+	* MessageFr.java (the class storing messages for the fr locale)
+	* MessageLoader.java (the class that loads the correct Message* class depending on the user locale)
 
-For more information about this step, see the next sections.
+	For more information about this step, see the next sections.
 
 3. At run-time, all you have to do to get translations is:
 
+```java
 	I18n.normalKeyWith1Parameter(42);
+```
 
-or:
+	or:
 
+```java
 	I18n.pluralKey(itemNumber, itemNumber, parameter2);
+```
 
 And voilà!
 
@@ -118,31 +150,26 @@ See the previous section "How Does the Framework Work for Your Project?".
 This section describes the step of generating translation classes with only a Main class (without any Maven or Ant plugins).
 
 * Include the jstf-lib.jar file in the classpath of the project that will display translated messages (let us name it "myproject").
-
 * In your Java project, add a folder "res" with a subfolder "messages" (for instance).
   In this folder, put your files "strings_en.xml", "string_en_UK.xml", "strings_fr.xml"...
   See section "XML Format of Translations" below for the format of these files.
-
 * Make sure you exclude this "res" from exporting to JAR.
   It is useless to have these XML files in your deliverable (because Java classes will ).
-
 * Create another projet with the suffix "-generator" side to side with your main project (the one that needs to be translated).
   For instance, if your project is "myproject", create a project "myproject-generator".
-
 * Include the jstf-lib.jar and jstf-generator.jar files in the classpath of the "myproject-generator" project.
-
 * In the "myproject-generator" project, create a MainGeneration class with the following method:
+```java
 	public static void main(String[] args) throws IOException {
 		String xmlFolder = "../myproject/res/messages";
 		String outClassPathFolder = "../myproject/src";
 		String packageName = "org.myproject.i18n";
 		TranslationGenerator.generate(xmlFolder, outClassPathFolder, packageName);
 	}
-
+```
 * Whenever the translations change, run that MainGeneration class in the "myproject-generator" project.
   This will generate classes in 
   You can use the generated class I18n to access translations in "myproject".
-
 * There is an optional parameter in TranslationGenerator.generate(): you can use the options described in the "Advanced Uses" section of this manual.
 
 How to Translate Your Project Using Maven
@@ -158,19 +185,21 @@ This is the project "jstf-test".
 * By default, you place your string*.xml files in the folder /src/main/resources/jstf of the project.
   Eg. /src/main/resources/jstf/strings.xml
   or  /src/main/resources/jstf/strings_fr.xml
-
 * Edit your pom.xml to include these sections:
 
 	Add this part in the <dependencies></dependencies> section:
 
+```xml
 		<dependency>
 			<groupId>org.jstf</groupId>
 			<artifactId>jstf-lib</artifactId>
 			<version>0.0.1-SNAPSHOT</version>
 		</dependency>
+```
 
 	Add this part in the <build><plugins></plugins></build> section:
 
+```xml
 		<plugin>
 			<groupId>org.jstf</groupId>
 			<artifactId>jstf-maven-plugin</artifactId>
@@ -186,9 +215,11 @@ This is the project "jstf-test".
 				</execution>
 			</executions>
 		</plugin>
+```
 
 	If you use Eclipse, add this part in the <build><pluginManagement><plugins></plugins></pluginManagement></build> section:
 
+```xml
 		<!-- http://stackoverflow.com/questions/8393447/is-maven-eclipse-plugin-no-longer-needed-with-the-new-m2eclipse-in-indigo -->
 		<!--This plugin's configuration is used to store Eclipse m2e settings only. It has no influence on the Maven build itself. -->
 		<plugin>
@@ -221,6 +252,7 @@ This is the project "jstf-test".
 				</lifecycleMappingMetadata>
 			</configuration>
 		</plugin>
+```
 
 * By default, the Maven plugin build will generate access classes in the package "org.jstf.messages".
 
@@ -231,6 +263,7 @@ XML Format of Translations
 
 Basically, here is an example of strings.xml file in order to understand the format:
 
+```xml
 	<?xml version="1.0" encoding="utf-8"?>
 	<resources>
 		<string name="normalKeyWith1Parameter">Normal key with one parameter: %d</string>
@@ -244,6 +277,7 @@ Basically, here is an example of strings.xml file in order to understand the for
 			<item quantity="other">The is another %d translations</item>
 		</plurals>
 	</resources>
+```
 
 * The root node of the XML file is <resources/>.
 
@@ -310,6 +344,16 @@ http://android-developers.blogspot.fr/2013/11/app-translation-service-now-availa
 Eclipse Plugin for that
 http://developer.android.com/sdk/installing/installing-adt.html#tmgr
 
+Find Hardcoded Messages to Translate
+----
+
+In order to test if every user-visible texts in your application are coming from a translation resource instead of being hard-coded, use the language code "xx".
+For instance, you can use this line of code (to be run before the very first message gets translated):
+
+```java
+Locale.setDefault(new Locale("xx", "XX"));
+```
+
 Configuring a Tool to Check for Unused Messages
 ----
 
@@ -358,6 +402,8 @@ If you are worried about performances or JVM limits when generating classes with
 In the test generator project, there is a Main class generating an XML file with thousands of strings and plurals.
 Here are the results:
 TODO Jar size, class loading time on computer and Android devices.
+
+TODO Format the tests and results in an intelligible way!
 
 	GENERATED CONSTANTS
 		STRINGS:
@@ -438,11 +484,9 @@ Fetch the project from GitHub.
 In Eclipse, import existing Maven projects for sub-modules.
 In Eclipse, in "jstf" parent project, right click each "jstf-*" folders and choose Properties, check "Derived".
 
-
 TODO
 TODO JUnit to check generated classes
 TODO JUnit to check working translations
-
 
 Mail to be sent to libGdx guys (in progress)
 ----
