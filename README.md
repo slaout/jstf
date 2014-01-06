@@ -127,13 +127,17 @@ It is the same format as Android strings.xml files.
 	For more information about this step, see the next sections.
 
 3. At run-time, all you have to do to get translations is:
+
 ```java
 	I18n.normalKeyWith1Parameter(42);
 ```
+
 or:
+
 ```java
 	I18n.pluralKey(itemNumber, itemNumber, parameter2);
 ```
+
 And voilà!
 
 How to Translate Your Project Using a Main Program
