@@ -29,6 +29,8 @@ public class FormatterParserTest {
 
 		test("Message %% %n!", new String[] { });
 
+		test("Message %s %% (oh oh oh)", new String[] { "String" });
+
 //		MessageFormat msgFmt = new MessageFormat("This is a {0} 'message with {10}' + At {1,time} on {1,date}, there was {2} on planet {0,number,integer}.");
 //
 //		msgFmt.getFormats();
