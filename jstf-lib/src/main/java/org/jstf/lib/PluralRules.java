@@ -522,14 +522,14 @@ public abstract class PluralRules {
 		return new Locale(languageCode).getLanguage();
 	}
 
-	private static class Other extends PluralRules {
+	protected static class Other extends PluralRules {
 		@Override
-		public int getCategoryForQuantity(@SuppressWarnings("unused") int quantity) {
+		public int getCategoryForQuantity(int quantity) {
 			return CATEGORY_OTHER;
 		}
 	}
 
-	private static class Manx extends PluralRules {
+	protected static class Manx extends PluralRules {
 		@Override
 		public int getCategoryForQuantity(int quantity) {
 			if ((quantity % 10 >= 1 && quantity % 10 <= 2) || quantity % 20 == 0) {
@@ -540,7 +540,7 @@ public abstract class PluralRules {
 		}
 	}
 
-	private static class CentralMoroccoTamazight extends PluralRules {
+	protected static class CentralMoroccoTamazight extends PluralRules {
 		@Override
 		public int getCategoryForQuantity(int quantity) {
 			if ((quantity >= 0 && quantity <= 1) || (quantity >= 11 && quantity <= 99)) {
@@ -551,7 +551,7 @@ public abstract class PluralRules {
 		}
 	}
 
-	private static class Macedonian extends PluralRules {
+	protected static class Macedonian extends PluralRules {
 		@Override
 		public int getCategoryForQuantity(int quantity) {
 			if (quantity % 10 == 1 && quantity != 11) {
@@ -562,14 +562,14 @@ public abstract class PluralRules {
 		}
 	}
 
-	private static class OtherOneOther extends PluralRules {
+	protected static class OtherOneOther extends PluralRules {
 		@Override
 		public int getCategoryForQuantity(int quantity) {
 			return (quantity == 1 ? CATEGORY_ONE : CATEGORY_OTHER);
 		}
 	}
 
-	private static class Latvian extends PluralRules {
+	protected static class Latvian extends PluralRules {
 		@Override
 		public int getCategoryForQuantity(int quantity) {
 			if (quantity == 0) {
@@ -582,7 +582,7 @@ public abstract class PluralRules {
 		}
 	}
 
-	private static class ZeroOneOther extends PluralRules {
+	protected static class ZeroOneOther extends PluralRules {
 		@Override
 		public int getCategoryForQuantity(int quantity) {
 			if (quantity == 0) {
@@ -595,7 +595,7 @@ public abstract class PluralRules {
 		}
 	}
 
-	private static class OtherOneTwoOther extends PluralRules {
+	protected static class OtherOneTwoOther extends PluralRules {
 		@Override
 		public int getCategoryForQuantity(int quantity) {
 			if (quantity == 1) {
@@ -608,7 +608,7 @@ public abstract class PluralRules {
 		}
 	}
 
-	private static class ManyOneFewManyOneFewMany extends PluralRules {
+	protected static class ManyOneFewManyOneFewMany extends PluralRules {
 		@Override
 		public int getCategoryForQuantity(int quantity) {
 			if (quantity % 10 == 1 && quantity % 100 != 11) {
@@ -623,14 +623,14 @@ public abstract class PluralRules {
 		}
 	}
 
-	private static class OneOneOther extends PluralRules {
+	protected static class OneOneOther extends PluralRules {
 		@Override
 		public int getCategoryForQuantity(int quantity) {
 			return (quantity == 0 || quantity == 1 ? CATEGORY_ONE : CATEGORY_OTHER);
 		}
 	}
 
-	private static class Arabic extends PluralRules {
+	protected static class Arabic extends PluralRules {
 		@Override
 		public int getCategoryForQuantity(int quantity) {
 			if (quantity == 0) {
@@ -649,7 +649,7 @@ public abstract class PluralRules {
 		}
 	}
 
-	private static class Welsh extends PluralRules {
+	protected static class Welsh extends PluralRules {
 		@Override
 		public int getCategoryForQuantity(int quantity) {
 			if (quantity == 0) {

@@ -102,6 +102,7 @@ public class JstfMojo extends AbstractMojo {
 	@Parameter(defaultValue = "false", required = false)
 	private boolean skipGeneratedSourcesCompilation;
 
+	@Override
 	public void execute() throws MojoFailureException
 	{
 		getLog().info("Generating JSTF package " + packageName);
