@@ -19,9 +19,9 @@ import java.util.regex.Pattern;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 
+import org.apache.commons.lang.StringEscapeUtils;
 import org.jstf.generator.parser.FormatterParser;
 import org.jstf.generator.parser.MessageFormatParser;
-import org.jstf.generator.util.StringUtils;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
@@ -203,7 +203,7 @@ public class TranslationGenerator {
 				Node stringNode = stringNodes.item(i);
 				String key = stringNode.getAttributes().getNamedItem("name").getTextContent();
 				// Read the string in the XML file and interpret things like \n & \u0042
-				String value = StringUtils.unescapeJava(stringNode.getTextContent());
+				String value = StringEscapeUtils.unescapeJava(stringNode.getTextContent());
 
 				// Map<locale, translatedString>
 				Map<String, String> mapForKey = strings.get(key);
@@ -247,7 +247,7 @@ public class TranslationGenerator {
 			Node itemNode = itemNodes.item(i);
 			if (itemNode.getAttributes() != null && quantity.equals(itemNode.getAttributes().getNamedItem("quantity").getNodeValue())) {
 				// Read the string in the XML file and interpret things like \n & \u0042
-				return StringUtils.unescapeJava(itemNode.getTextContent());
+				return StringEscapeUtils.unescapeJava(itemNode.getTextContent());
 			}
 		}
 		return null;
@@ -581,7 +581,7 @@ public class TranslationGenerator {
 		int i = 0;
 		for (Entry<String, Map<String, String>> entry : strings.entrySet()) {
 			// Replace " by \" and escape international characters with encoding-independent \u0042 equivalents
-			String value = StringUtils.escapeJava(entry.getValue().get(locale));
+			String value = StringEscapeUtils.escapeJava(entry.getValue().get(locale));
 			builder.append("\t\t").append(value == null ? "null" : "\"" + value + "\"").append(i < keySetSize - 1 ? "," : "").append(LS);
 			i++;
 		}
@@ -596,7 +596,8 @@ public class TranslationGenerator {
 			String[] values = entry.getValue().get(locale);
 			if (values != null) {
 				for(int j = 0; j < values.length; j++) {
-					String value = StringUtils.escapeJava(values[j]);
+					// Replace " by \" and escape international characters with encoding-independent \u0042 equivalents
+					String value = StringEscapeUtils.escapeJava(values[j]);
 					builder.append("\t\t\t").append(value == null ? "null" : "\"" + value + "\"").append(j < values.length - 1 ? "," : "").append(LS);
 				}
 			}
