@@ -1,20 +1,20 @@
-//package org.jstf.test;
-//
-//import java.io.IOException;
-//
-//import org.jstf.TranslationGenerator;
-//import org.jstf.TranslationGeneratorOptions;
-//
-//
-//public class MainGeneration {
-//
-//	public static void main(String[] args) throws IOException {
-//		// D:\dev\workspaces\workspace1\org.jstf
-//		// String projectFolder = new java.io.File(".").getCanonicalPath();
-//		// String xmlFolder = projectFolder + File.separator + ...
-//
-//		String outClassesFolder = "../jstf-test/src";
-//
+package org.jstf.test;
+
+
+import java.io.IOException;
+
+import org.jstf.generator.TranslationGenerator;
+import org.jstf.generator.TranslationGeneratorOptions;
+
+public class MainGeneration {
+
+	public static void main(String[] args) throws IOException {
+		String xmlFolder = "src/main/resources/jstf";
+		String outClassPathFolder = "target/generated-sources/jstf";
+		TranslationGeneratorOptions options = new TranslationGeneratorOptions();
+		options.packageName = "org.jstf.messages";
+		TranslationGenerator.generate(xmlFolder, outClassPathFolder, options);
+
 //		// Pack 1
 //		{
 //			String xmlFolder = "../jstf-test/res/pack1";
@@ -44,6 +44,6 @@
 //			options.useConstantsInsteadOfMethods = false;
 //			TranslationGenerator.generate(xmlFolder, outClassesFolder, packageName, options);
 //		}
-//	}
-//
-//}
+	}
+
+}

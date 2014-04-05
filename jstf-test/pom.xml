@@ -27,6 +27,13 @@
 			<artifactId>jstf-lib</artifactId>
 			<version>0.0.1-SNAPSHOT</version>
 		</dependency>
+
+		<!-- For executing TranslationGenerator via a Main class for debugging -->
+		<dependency>
+			<groupId>org.jstf</groupId>
+			<artifactId>jstf-generator</artifactId>
+			<version>0.0.1-SNAPSHOT</version>
+		</dependency>
 	</dependencies>
 
 	<build>

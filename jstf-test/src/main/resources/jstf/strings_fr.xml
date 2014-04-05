@@ -5,8 +5,16 @@
 	<string name="normalKeyWith2Parameters">Clef normale avec deux paramètres : %s et %d</string>
 	<string name="keyWithNoEnUkTranslation">Clef sans traduction en_UK</string>
 	<!--string name="keyWithNoFrTranslation">Clef sans traduction fr</string-->
-	<string name="keyNeedingJavaEscaping">	Clef nécessitant une 'échappement' "Java" !</string>
+	<string name="keyNeedingJavaEscaping">	Clef nécessitant un 'échappement' "Java" !</string>
 	<string name="keyWithEmptyMessage"></string>
 	<string name="unusedKey">Clef inutilisée</string>
 	<!--string name="keyWithMissingNonDefaultTranslations">Clef avec une traductions manquantes hormis celle par défaut</string-->
+
+	<string name="escapingTest">Test \n of 'éscaping' with \\ spécial \t "characters"</string>
+
+	<plurals name="escapingPluralTest">
+		<item quantity="one">ONE: Test \n of 'éscaping' with \\ spécial \t "characters"</item>
+		<item quantity="other">OTHER: Test \n of 'éscaping' with \\ spécial \t "characters"</item>
+	</plurals>
+
 </resources>

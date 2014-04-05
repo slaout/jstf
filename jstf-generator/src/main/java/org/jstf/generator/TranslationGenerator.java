@@ -202,7 +202,8 @@ public class TranslationGenerator {
 			for (int i = 0; i < stringCount; ++i) {
 				Node stringNode = stringNodes.item(i);
 				String key = stringNode.getAttributes().getNamedItem("name").getTextContent();
-				String value = stringNode.getTextContent();
+				// Read the string in the XML file and interpret things like \n & \u0042
+				String value = StringUtils.unescapeJava(stringNode.getTextContent());
 
 				// Map<locale, translatedString>
 				Map<String, String> mapForKey = strings.get(key);
@@ -245,7 +246,8 @@ public class TranslationGenerator {
 		for (int i = 0; i < itemNodes.getLength(); i++) {
 			Node itemNode = itemNodes.item(i);
 			if (itemNode.getAttributes() != null && quantity.equals(itemNode.getAttributes().getNamedItem("quantity").getNodeValue())) {
-				return itemNode.getTextContent();
+				// Read the string in the XML file and interpret things like \n & \u0042
+				return StringUtils.unescapeJava(itemNode.getTextContent());
 			}
 		}
 		return null;
@@ -578,6 +580,7 @@ public class TranslationGenerator {
 		int keySetSize = strings.keySet().size();
 		int i = 0;
 		for (Entry<String, Map<String, String>> entry : strings.entrySet()) {
+			// Replace " by \" and escape international characters with encoding-independent \u0042 equivalents
 			String value = StringUtils.escapeJava(entry.getValue().get(locale));
 			builder.append("\t\t").append(value == null ? "null" : "\"" + value + "\"").append(i < keySetSize - 1 ? "," : "").append(LS);
 			i++;
